@@ -27,7 +27,7 @@ namespace Barcode_Creator
         {
             int SER = 000001; // set serial number
             string jn = textBox1.Text;
-            string numpg = textBox2.Text;
+            int numpg = int.Parse(textBox2.Text);
             string name = textBox3.Text;
             string pc = textBox4.Text;
 
@@ -48,32 +48,54 @@ namespace Barcode_Creator
 
                 using (var dr = new CsvDataReader(csv))
                 {
-                    var dt = new System.Data.DataTable();
+                    var dt = new DataTable();
                     dt.Load(dr);
 
                     // Create new columns to be appended the start of the datatable
-                    DataColumn newCol = new DataColumn("pbBarcode1", typeof(string));
+                    int i = 1;
+                    int k = 0;
+                    do
+                    {
+                        DataColumn newCol = new DataColumn("pbBarcode" + i, typeof(string));
+                        dt.Columns.Add(newCol);
+                        newCol.SetOrdinal(k);
+
+                        i++;
+                        k++;
+
+                    } while (i != numpg+1);
+
 
 
                     // Add new columns for Barcodes
-                    dt.Columns.Add(newCol);
+                    // dt.Columns.Add(newCol);
 
 
                     //Set positon of new columns
-                    newCol.SetOrdinal(0);
+                    //newCol.SetOrdinal(0);
 
 
                     //loop through each row and add data
+        
+                    i = 1;
                     foreach (DataRow row in dt.Rows)
                     {
-                        row["pbBarcode1"] = SER.ToString("000") + SER.ToString("000");
+                        
+                            for (i = 1; i < numpg+1;i++)
+                            {
+                                row["pbBarcode" + i] = SER.ToString("0000");
+                                
+                            }
+
 
 
                         SER++;
+                     }
+
 
                         //}
 
-                        using (var textWriter = File.CreateText(dir + "\\" + "test.txt"))
+                        using (var textWriter = File.CreateText(dir + "\\" + "test1.txt"))
                         using (var csv1 = new CsvWriter(textWriter))
                         {
                             // Write columns
@@ -86,9 +108,9 @@ namespace Barcode_Creator
                             // Write row values
                             foreach (DataRow row1 in dt.Rows)
                             {
-                                for (var i = 0; i < dt.Columns.Count; i++)
+                                for (var j = 0; j < dt.Columns.Count; j++)
                                 {
-                                    csv1.WriteField(row1[i]);
+                                    csv1.WriteField(row1[j]);
                                 }
                                 csv1.NextRecord();
                             }
@@ -101,4 +123,4 @@ namespace Barcode_Creator
             }
         }
     }
-}
+
