@@ -163,7 +163,7 @@ namespace Barcode_Creator
 
                     using (StreamWriter sw = new StreamWriter(dir + "\\" + jn + " MRDF" + ".txt", append: true))
                     {
-                        string header = jn.ToString("0000000000") + str + DateTime.Now;
+                        string header = jn.ToString("0000000000") + str + DateTime.Now; // Header for MRDF file
                         sw.WriteLine(header);
                     }
 
