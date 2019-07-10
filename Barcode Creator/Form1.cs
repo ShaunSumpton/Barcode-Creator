@@ -28,32 +28,26 @@ namespace Barcode_Creator
         private void button1_Click(object sender, EventArgs e)
         {
             long SER = 000001; // set serial number
-            long jn = int.Parse(textBox1.Text);
-            int numpg = int.Parse(textBox2.Text);
-            int name = int.Parse(textBox3.Text) + numpg;
-            int pc = int.Parse(textBox4.Text) + numpg;
+            long jn = int.Parse(textBox1.Text); // set job number
+            int numpg = int.Parse(textBox2.Text); // set number of pages
+            int name = int.Parse(textBox3.Text) + numpg; // index for name
+            int pc = int.Parse(textBox4.Text) + numpg; // index for postcode
 
-            OpenFileDialog openFileDialog2 = new OpenFileDialog();
+            OpenFileDialog openFileDialog2 = new OpenFileDialog(); // get CSV file
             openFileDialog2.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             openFileDialog2.ShowDialog();
 
-            file = openFileDialog2.FileName;
-            dir = Path.GetDirectoryName(file);
+            file = openFileDialog2.FileName; // csv file name
+            dir = Path.GetDirectoryName(file); // csv path
 
+
+            // ** SETTING VARIABLES FOR MRDF EXPORT ** //
             string JobID = new string(' ', 10);
             string PieceID = new string(' ', 6);
             string JobType = new string(' ', 32);
             string SourceID = new string(' ', 32);
             var Name = new string(' ', 40);
-
-            // string PagesInput02, PagesInput03, PagesInput04, SubsetInput01, SubsetInput02, SubsetInput03, SubsetInput04,
-            // StitchInput01, StitchInput02, StitchInput03, StitchInput04 = new string(' ', 2);
-
             string InputWeight = new string(' ', 5);
-
-            // int Sel1, Sel2, Sel3, Sel4, Sel5, Sel6, Sel7, Sel8, Sel9, Sel10, Sel11, Sel12, Sel13, Sel14, Sel15, Sel16,
-            //AccountPull, QualityAudit, AlertClear, EdgeMark, VS1, VS2, VS3, VS4, VS5, VS6 = 0;
-
             string PagesInput02 = new string(' ', 2);
             string PagesInput03 = new string(' ', 2);
             string PagesInput04 = new string(' ', 2);
