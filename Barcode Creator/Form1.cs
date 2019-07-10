@@ -158,7 +158,7 @@ namespace Barcode_Creator
 
                     //loop through each row and add data
                     string str = new string(' ', 32);
-                    string OutDat;
+                    string OutDat; // string to hold output data
 
 
                     using (StreamWriter sw = new StreamWriter(dir + "\\" + jn + " MRDF" + ".txt", append: true))
