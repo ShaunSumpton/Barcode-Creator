@@ -45,6 +45,15 @@ namespace Barcode_Creator
             string JobType = new string(' ', 32);
             string SourceID = new string(' ', 32);
             var Name = new string(' ', 40);
+
+            // string PagesInput02, PagesInput03, PagesInput04, SubsetInput01, SubsetInput02, SubsetInput03, SubsetInput04,
+            // StitchInput01, StitchInput02, StitchInput03, StitchInput04 = new string(' ', 2);
+
+            string InputWeight = new string(' ', 5);
+
+            // int Sel1, Sel2, Sel3, Sel4, Sel5, Sel6, Sel7, Sel8, Sel9, Sel10, Sel11, Sel12, Sel13, Sel14, Sel15, Sel16,
+            //AccountPull, QualityAudit, AlertClear, EdgeMark, VS1, VS2, VS3, VS4, VS5, VS6 = 0;
+
             string PagesInput02 = new string(' ', 2);
             string PagesInput03 = new string(' ', 2);
             string PagesInput04 = new string(' ', 2);
@@ -56,8 +65,7 @@ namespace Barcode_Creator
             string StitchInput02 = new string(' ', 2);
             string StitchInput03 = new string(' ', 2);
             string StitchInput04 = new string(' ', 2);
-            string InputWeight = new string(' ', 5);
-
+            
             int Sel1 = 0;
             int Sel2 = 0;
             int Sel3 = 0;
@@ -115,17 +123,17 @@ namespace Barcode_Creator
             using (var reader = new StreamReader(file)) //load CSV from BBS
             using (var csv = new CsvReader(reader))
 
-            
+
 
             {
-              
+
 
                 using (var dr = new CsvDataReader(csv))
                 {
                     var dt = new DataTable();
                     dt.Load(dr);
 
-                  
+
 
                     // Create new columns to be appended the start of the datatable
                     int i = 1;
@@ -139,7 +147,7 @@ namespace Barcode_Creator
                         i++;
                         k++;
 
-                    } while (i != numpg+1);
+                    } while (i != numpg + 1);
 
                     DataColumn newCol1 = new DataColumn("SER", typeof(string));
                     dt.Columns.Add(newCol1);
@@ -157,29 +165,29 @@ namespace Barcode_Creator
                     //loop through each row and add data
                     string str = new string(' ', 32);
                     string OutDat;
-                  
 
-                    using (StreamWriter sw = new StreamWriter(dir + "\\"+ jn + " MRDF" + ".txt",append: true))
+
+                    using (StreamWriter sw = new StreamWriter(dir + "\\" + jn + " MRDF" + ".txt", append: true))
                     {
                         string header = jn.ToString("0000000000") + str + DateTime.Now;
                         sw.WriteLine(header);
                     }
 
-                    
+
 
 
                     i = 1;
                     int y = 0;
-                   
+                
 
 
                     foreach (DataRow row in dt.Rows)
                     {
                         StringBuilder sb = new StringBuilder(40);
-                        
+
 
                         Name = dt.Rows[y][name].ToString();
-                        Name = Name.PadRight(40,' ');
+                        Name = Name.PadRight(40, ' ');
 
                         postcode = dt.Rows[y][pc].ToString();
                         postcode = postcode.PadRight(16, ' ');
@@ -188,7 +196,7 @@ namespace Barcode_Creator
 
                         using (StreamWriter sw = new StreamWriter(dir + "\\" + jn + " MRDF" + ".txt", append: true))
                         {
-                            OutDat = jn.ToString("0000000000") + SER.ToString("00000") + JobType + SourceID + numpg.ToString("00") + PagesInput02 + PagesInput03 + PagesInput04;
+                            OutDat = jn.ToString("0000000000") + SER.ToString("000000") + JobType + SourceID + numpg.ToString("00") + PagesInput02 + PagesInput03 + PagesInput04;
                             OutDat = OutDat + SubsetInput01 + SubsetInput02 + SubsetInput03 + SubsetInput04 + StitchInput01 + StitchInput02 + StitchInput03 + StitchInput04 + InputWeight;
                             OutDat = OutDat + Sel1 + Sel2 + Sel3 + Sel4 + Sel5 + Sel6 + Sel7 + Sel8 + Sel9 + Sel10 + Sel11 + Sel12 + Sel13 + Sel14 + Sel15 + Sel16;
                             OutDat = OutDat + AccountPull + QualityAudit + AlertClear + EdgeMark + VS1 + VS2 + VS3 + VS4 + VS5 + VS6;
@@ -202,47 +210,52 @@ namespace Barcode_Creator
 
                         }
 
-                        for (i = 1; i < numpg+1;i++)
-                            {
+                        for (i = 1; i < numpg + 1; i++)
+                        {
 
-                           
-                                row["SER"] = SER.ToString("000000");
-                                row["PBbarcode" + i] = jn.ToString("0000000000") + SER.ToString("000000") + i.ToString("00") + numpg.ToString("00") + ("00000000") ;
-                            }
+
+                            row["SER"] = SER.ToString("000000");
+                            row["PBbarcode" + i] = jn.ToString("0000000000") + SER.ToString("000000") + i.ToString("00") + numpg.ToString("00") + ("00000000");
+                        }
                         SER++;
                     }
 
-                        
+
 
                     using (var textWriter = File.CreateText(dir + "\\" + jn + ".txt")) // write contents to text file
-                        using (var csv1 = new CsvWriter(textWriter))
+                        
+                    using (var csv1 = new CsvWriter(textWriter))
+                    {
+                        // Write columns
+                        csv1.Configuration.Delimiter = "\t";
+
+                        foreach (DataColumn column in dt.Columns)
                         {
-                            // Write columns
-                            foreach (DataColumn column in dt.Columns)
+                            csv1.WriteField(column.ColumnName);
+                        }
+                        csv1.NextRecord();
+
+                        // Write row values
+                        foreach (DataRow row1 in dt.Rows)
+                        {
+                            for (var j = 0; j < dt.Columns.Count; j++)
                             {
-                                csv1.WriteField(column.ColumnName);
+                                csv1.WriteField(row1[j]);
                             }
                             csv1.NextRecord();
-
-                            // Write row values
-                            foreach (DataRow row1 in dt.Rows)
-                            {
-                                for (var j = 0; j < dt.Columns.Count; j++)
-                                {
-                                    csv1.WriteField(row1[j]);
-                                }
-                                csv1.NextRecord();
-                            }
                         }
-
-
-
                     }
+
+
+
                 }
             }
-
-        
-
+        }
     }
-    }
+}
+
+
+
+
+
 
