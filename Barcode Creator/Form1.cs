@@ -157,7 +157,7 @@ namespace Barcode_Creator
 
 
                     //loop through each row and add data
-                    string str = new string(' ', 32);
+                    string str = new string(' ', 32); // string for header
                     string OutDat; // string to hold output data
 
 
