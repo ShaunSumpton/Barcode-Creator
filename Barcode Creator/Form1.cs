@@ -33,6 +33,9 @@ namespace Barcode_Creator
             int name = int.Parse(textBox3.Text) + numpg; // index for name
             int pc = int.Parse(textBox4.Text) + numpg; // index for postcode
 
+            try
+                {
+
             OpenFileDialog openFileDialog2 = new OpenFileDialog(); // get CSV file
             openFileDialog2.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             openFileDialog2.ShowDialog();
@@ -132,21 +135,32 @@ namespace Barcode_Creator
                     // Create new columns to be appended the start of the datatable
                     int i = 1;
                     int k = 0;
-                    do
+                    try
+                        {
+
+                            do
+                            {
+                                DataColumn newCol = new DataColumn("PBbarcode" + i, typeof(string));
+                                dt.Columns.Add(newCol);
+                                newCol.SetOrdinal(k);
+
+                                i++;
+                                k++;
+
+                            } while (i != numpg + 1);
+
+                            DataColumn newCol1 = new DataColumn("SER", typeof(string));
+                            dt.Columns.Add(newCol1);
+                            newCol1.SetOrdinal(0);
+
+                        }
+                    catch
                     {
-                        DataColumn newCol = new DataColumn("PBbarcode" + i, typeof(string));
-                        dt.Columns.Add(newCol);
-                        newCol.SetOrdinal(k);
-
-                        i++;
-                        k++;
-
-                    } while (i != numpg + 1);
-
-                    DataColumn newCol1 = new DataColumn("SER", typeof(string));
-                    dt.Columns.Add(newCol1);
-                    newCol1.SetOrdinal(0);
-
+                        MessageBox.Show("Column Already Exsists in Data");
+                        Application.Exit();
+                         Environment.Exit(0);
+                      
+                    }
 
                     // Add new columns for Barcodes
                     // dt.Columns.Add(newCol);
@@ -161,10 +175,10 @@ namespace Barcode_Creator
                     string OutDat; // string to hold output data
 
 
-                    using (StreamWriter sw = new StreamWriter(dir + "\\" + jn + " MRDF" + ".txt", append: true))
+                    using (StreamWriter sw = new StreamWriter(@"\\6.1.1.115\Maildata\INPUT\"+ jn.ToString("0000000000") + ".txt", append: true))
                     {
                         string header = jn.ToString("0000000000") + str + DateTime.Now; // Header for MRDF file
-                        sw.WriteLine(header); // write header to MRDF File
+                        sw.WriteLine(header); 
                     }
 
 
@@ -188,7 +202,7 @@ namespace Barcode_Creator
 
                         y++;
 
-                        using (StreamWriter sw = new StreamWriter(dir + "\\" + jn + " MRDF" + ".txt", append: true))
+                        using (StreamWriter sw = new StreamWriter(@"\\6.1.1.115\Maildata\INPUT\"+ jn.ToString("0000000000") + ".txt", append: true))
                         {
                             OutDat = jn.ToString("0000000000") + SER.ToString("000000") + JobType + SourceID + numpg.ToString("00") + PagesInput02 + PagesInput03 + PagesInput04;
                             OutDat = OutDat + SubsetInput01 + SubsetInput02 + SubsetInput03 + SubsetInput04 + StitchInput01 + StitchInput02 + StitchInput03 + StitchInput04 + InputWeight;
@@ -240,10 +254,17 @@ namespace Barcode_Creator
                         }
                     }
 
-
+                    MessageBox.Show("MRDF Created");
 
                 }
             }
+            }
+
+            catch (Exception f)
+            {
+                MessageBox.Show(f.ToString());
+            }
+
         }
     }
 }
